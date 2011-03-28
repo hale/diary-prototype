@@ -121,18 +121,20 @@ public class Day
      */
     public void showAppointments()
     {
-        System.out.println("=== Day " + dayNumber + " ===");
+        StringBuilder sb = new StringBuilder();
+    	sb.append("=== Day " + dayNumber + " ===\n");
         int time = START_OF_DAY;
         for(Appointment appointment : appointments) {
-            System.out.print(time + ": ");
+            sb.append(time + ": \n");
             if(appointment != null) {
-                System.out.println(appointment.getDescription());
+                sb.append(appointment.getDescription());
             }
             else {
-                System.out.println();
+                sb.append("\n");
             }
             time++;
         }
+        System.out.println(sb.toString());
     }
 
     /**
