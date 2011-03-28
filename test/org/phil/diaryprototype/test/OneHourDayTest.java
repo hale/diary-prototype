@@ -1,11 +1,16 @@
 package org.phil.diaryprototype.test;
 
 import static org.junit.Assert.*;
+
+import java.util.Random;
+
 import org.junit.Test;
 import org.phil.diaryprototype.Appointment;
 import org.phil.diaryprototype.Day;
 
-public class DayTest {
+public class OneHourDayTest {
+	
+	private Day day;
 		
 	@Test
 	public void testAppointmentsSize() {
@@ -15,58 +20,48 @@ public class DayTest {
 	
 	@Test
 	public void testFindSpaceEmpty() {
-		Day day = new Day(1);
+		day = new Day(1);
 		int actual = day.findSpace(new Appointment("" , 1));
 		assertEquals(Day.START_OF_DAY, actual);
 	}
 	
 	@Test
 	public void testFindSpaceFull() {
-		Day day = new Day(1);
+		day = new Day(1);
 		day = fillDay(day);
 		int actual = day.findSpace(new Appointment("", 1));
 		assertEquals(-1, actual);		
 	}
 
 	@Test
-	public void testMakeAptFirst() {
-		Day day = new Day(1);
-		boolean actual = day.makeAppointment(Day.START_OF_DAY, new Appointment("Test", 1));
-		assertTrue(actual);
+		public void makeThreeAppointments() {
+		day = new Day(1);
+		Random random = new Random();
 		
-		/*
-		 * Need to assert that the new appointment at the start of the day 
-		 * refers to the newly created appointment. 
-		 * Appointment actual = day.getAppointment(Day.START_OF_DAY);
-		 * Appointment expected = new Appointment("Test", 1);
-		 * assertSame(expected, actual);
-		*/
+		boolean first = day.makeAppointment(Day.START_OF_DAY, new Appointment("First", 1));
+		// Make an appointment somewhere between the beginning and end of the day
+		boolean second = day.makeAppointment(random.nextInt(Day.FINAL_APPOINTMENT_TIME - Day.START_OF_DAY) + Day.START_OF_DAY + 1, new Appointment("Test", 1));
+		boolean third = day.makeAppointment(Day.FINAL_APPOINTMENT_TIME, new Appointment("Third", 1));
+		assertTrue(first && second && third);
 	}
-	
-	@Test
-	public void testMakeAptLast() {
-		Day day = new Day(1);
-		boolean actual = day.makeAppointment(Day.FINAL_APPOINTMENT_TIME, new Appointment("Test", 1));
-		assertTrue(actual);
-	}
-		
+
 	@Test 
 	public void testMakeAptLowerFail() {
-		Day day = new Day(1);
+		day = new Day(1);
 		boolean actual = day.makeAppointment(Day.START_OF_DAY - 1, new Appointment("Test", 1));
 		assertFalse(actual);
 	}
 	
 	@Test
 	public void testMakeAptUpperFail() {
-		Day day = new Day(1);
+		day = new Day(1);
 		boolean actual = day.makeAppointment(Day.FINAL_APPOINTMENT_TIME+1, new Appointment("Test", 1));
 		assertFalse(actual);
 	}
 
 	@Test
 	public void testShowAppointmentsEmpty() {
-		Day day = new Day(1);
+		day = new Day(1);
 		StringBuilder sb = new StringBuilder();
 		sb.append("=== Day " + day.getDayNumber() + " ===\n");
         int time = Day.START_OF_DAY;
@@ -80,7 +75,7 @@ public class DayTest {
 	
 	@Test
 	public void testShowAppointmentsFull()  {
-		Day day = new Day(1);
+		day = new Day(1);
 		day = fillDay(day);
 		StringBuilder actual = day.showAppointments();
 		
@@ -93,6 +88,16 @@ public class DayTest {
         }
 		assertEquals(expected.toString(), actual.toString());
 	}
+	
+	@Test
+	public void testDoubleBooking()  {
+		makeThreeAppointments();
+		Appointment badAppointment = new Appointment("Error", 1);
+		boolean actual = day.makeAppointment(9, badAppointment);
+		assertFalse(actual);
+	}
+	
+	
 	
 	private Day fillDay(Day day) {
 		for (int time = Day.START_OF_DAY;
