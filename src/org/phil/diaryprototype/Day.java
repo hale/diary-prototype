@@ -119,15 +119,15 @@ public class Day
     /**
      * Print a list of the day's appointments on standard output.
      */
-    public void showAppointments()
+    public StringBuilder showAppointments()
     {
         StringBuilder sb = new StringBuilder();
     	sb.append("=== Day " + dayNumber + " ===\n");
         int time = START_OF_DAY;
         for(Appointment appointment : appointments) {
-            sb.append(time + ": \n");
+            sb.append(time + ": ");
             if(appointment != null) {
-                sb.append(appointment.getDescription());
+                sb.append(appointment.getDescription() + "\n");
             }
             else {
                 sb.append("\n");
@@ -135,6 +135,7 @@ public class Day
             time++;
         }
         System.out.println(sb.toString());
+        return sb;
     }
 
     /**

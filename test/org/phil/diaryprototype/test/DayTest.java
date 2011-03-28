@@ -12,12 +12,12 @@ import org.phil.diaryprototype.Appointment;
 import org.phil.diaryprototype.Day;
 
 public class DayTest {
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	//private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
-	@Before
-	public void setUpStreams()  {
-		System.setOut(new PrintStream(outContent));
-	}
+	//@Before
+	//public void setUpStreams()  {
+	//	System.setOut(new PrintStream(outContent));
+	//}
 	
 	
 	@Test
@@ -44,15 +44,14 @@ public class DayTest {
         int time = Day.START_OF_DAY;
         for(int i = 0; i < Day.MAX_APPOINTMENTS_PER_DAY; i++) {
             sb.append(time + ": \n");
-            sb.append("\n");            
             time++;
         }
-		sb.append("\n");
         
-		testDay.showAppointments();
-		assertEquals(sb.toString(), outContent.toString());
+		StringBuilder actual = testDay.showAppointments();
+		assertEquals(sb.toString(), actual.toString());
 	}
 	
+	@Test
 	public void testShowAppointmentsFull()  {
 		Day testDay = new Day(1);
 		for (int time = Day.START_OF_DAY;
@@ -61,12 +60,24 @@ public class DayTest {
 			testDay.makeAppointment(
 					time, new Appointment("Test " + time, 1));
 		}
-		testDay.showAppointments();
+		StringBuilder actual = testDay.showAppointments();
+		
+		StringBuilder expected = new StringBuilder();
+		expected.append("=== Day " + testDay.getDayNumber() + " ===\n");
+        int time = Day.START_OF_DAY;
+        for(int i = 0; i < Day.MAX_APPOINTMENTS_PER_DAY; i++) {
+            expected.append(time + ": Test " + time + "\n");
+            time++;
+        }
+		
+		
+		
+		assertEquals(expected.toString(), actual.toString());
 	}
 	
-	@After
-	public void cleanUpStreams()  {
-		System.setOut(null);
-	}
+	//@After
+	//public void cleanUpStreams()  {
+	//	System.setOut(null);
+	//}
 
 }
