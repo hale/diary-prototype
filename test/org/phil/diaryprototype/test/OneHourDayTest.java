@@ -14,54 +14,63 @@ public class OneHourDayTest {
 		
 	@Test
 	public void testAppointmentsSize() {
-		Day day = new Day(1);
+		newDay();
 		assertEquals(Day.MAX_APPOINTMENTS_PER_DAY, day.getAppointmentsLength());
 	}
 	
 	@Test
 	public void testFindSpaceEmpty() {
-		day = new Day(1);
+		newDay();
 		int actual = day.findSpace(new Appointment("" , 1));
 		assertEquals(Day.START_OF_DAY, actual);
 	}
 	
 	@Test
 	public void testFindSpaceFull() {
-		day = new Day(1);
+		newDay();
 		day = fillDay(day);
 		int actual = day.findSpace(new Appointment("", 1));
 		assertEquals(-1, actual);		
 	}
-
+	
 	@Test
-		public void makeThreeAppointments() {
-		day = new Day(1);
+	public void makeEarlyAppointment() {
+		newDay();
+		assertTrue(day.makeAppointment(Day.START_OF_DAY, new Appointment("First", 1)));
+	}
+	
+	@Test
+	public void makeMidAppointment() {
+		newDay();
 		Random random = new Random();
-		
-		boolean first = day.makeAppointment(Day.START_OF_DAY, new Appointment("First", 1));
 		// Make an appointment somewhere between the beginning and end of the day
-		boolean second = day.makeAppointment(random.nextInt(Day.FINAL_APPOINTMENT_TIME - Day.START_OF_DAY) + Day.START_OF_DAY + 1, new Appointment("Test", 1));
-		boolean third = day.makeAppointment(Day.FINAL_APPOINTMENT_TIME, new Appointment("Third", 1));
-		assertTrue(first && second && third);
+		int time = random.nextInt(Day.FINAL_APPOINTMENT_TIME - Day.START_OF_DAY) + Day.START_OF_DAY + 1;
+		assertTrue(day.makeAppointment(time, new Appointment("Test", 1)));
+	}
+	
+	@Test
+	public void makeLateAppointment() {
+		newDay();
+		assertTrue(day.makeAppointment(Day.FINAL_APPOINTMENT_TIME, new Appointment("Third", 1)));
 	}
 
 	@Test 
 	public void testMakeAptLowerFail() {
-		day = new Day(1);
+		newDay();
 		boolean actual = day.makeAppointment(Day.START_OF_DAY - 1, new Appointment("Test", 1));
 		assertFalse(actual);
 	}
 	
 	@Test
 	public void testMakeAptUpperFail() {
-		day = new Day(1);
+		newDay();
 		boolean actual = day.makeAppointment(Day.FINAL_APPOINTMENT_TIME+1, new Appointment("Test", 1));
 		assertFalse(actual);
 	}
 
 	@Test
 	public void testShowAppointmentsEmpty() {
-		day = new Day(1);
+		newDay();
 		StringBuilder sb = new StringBuilder();
 		sb.append("=== Day " + day.getDayNumber() + " ===\n");
         int time = Day.START_OF_DAY;
@@ -75,7 +84,7 @@ public class OneHourDayTest {
 	
 	@Test
 	public void testShowAppointmentsFull()  {
-		day = new Day(1);
+		newDay();
 		day = fillDay(day);
 		StringBuilder actual = day.showAppointments();
 		
@@ -91,13 +100,15 @@ public class OneHourDayTest {
 	
 	@Test
 	public void testDoubleBooking()  {
-		makeThreeAppointments();
+		makeEarlyAppointment();
 		Appointment badAppointment = new Appointment("Error", 1);
-		boolean actual = day.makeAppointment(9, badAppointment);
+		boolean actual = day.makeAppointment(Day.START_OF_DAY, badAppointment);
 		assertFalse(actual);
 	}
 	
-	
+	private void newDay()  {
+		day = new Day(1);
+	}
 	
 	private Day fillDay(Day day) {
 		for (int time = Day.START_OF_DAY;
