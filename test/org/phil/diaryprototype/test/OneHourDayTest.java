@@ -26,9 +26,16 @@ public class OneHourDayTest {
 	}
 	
 	@Test
+	public void testFindSpaceOne() {
+		makeEarlyAppointment();
+		int actual = day.findSpace(new Appointment("", 1));
+		assertEquals(Day.START_OF_DAY+1, actual);
+		
+	}
+	
+	@Test
 	public void testFindSpaceFull() {
-		newDay();
-		day = fillDay(day);
+		fillDay();
 		int actual = day.findSpace(new Appointment("", 1));
 		assertEquals(-1, actual);		
 	}
@@ -44,7 +51,7 @@ public class OneHourDayTest {
 		newDay();
 		Random random = new Random();
 		// Make an appointment somewhere between the beginning and end of the day
-		int time = random.nextInt(Day.FINAL_APPOINTMENT_TIME - Day.START_OF_DAY) + Day.START_OF_DAY + 1;
+		int time = random.nextInt(Day.FINAL_APPOINTMENT_TIME - Day.START_OF_DAY +1) + Day.START_OF_DAY;
 		assertTrue(day.makeAppointment(time, new Appointment("Test", 1)));
 	}
 	
@@ -84,8 +91,7 @@ public class OneHourDayTest {
 	
 	@Test
 	public void testShowAppointmentsFull()  {
-		newDay();
-		day = fillDay(day);
+		fillDay();
 		StringBuilder actual = day.showAppointments();
 		
 		StringBuilder expected = new StringBuilder();
@@ -110,14 +116,17 @@ public class OneHourDayTest {
 		day = new Day(1);
 	}
 	
-	private Day fillDay(Day day) {
+	@Test
+	public void fillDay() {
+		newDay();
+		boolean actual = true;
 		for (int time = Day.START_OF_DAY;
 		time <= Day.FINAL_APPOINTMENT_TIME;
 		time++)  {
-			day.makeAppointment(
-					time, new Appointment("Test " + time, 1));
+			actual = (actual && 
+					day.makeAppointment(time, new Appointment("Test " + time, 1)));
 		}
-		return day;
+		assertTrue(actual);
 	}
 
 
